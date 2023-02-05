@@ -1,10 +1,10 @@
 import React from 'react';
 import { useState, useRef } from 'react';
 import {Routes, Route} from 'react-router-dom';
-import Url from './Url';
-import NavBar from './NavBar';
-import File from './File';
-import About from './About';
+import Url from './pages/Url';
+import NavBar from './components/NavBar';
+import File from './pages/File';
+import About from './pages/About';
 import './App.css';
 
 function App() {

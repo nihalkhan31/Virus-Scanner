@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import sha256 from 'sha256';
 import {Input} from "@progress/kendo-react-inputs";
-import Table from './Table';
-import './App.css';
+import Table from '../components/Table';
+import '../App.css';
 import { Loader } from '@progress/kendo-react-indicators';
 const File = () => {
   const [value, setValue] = useState(null);

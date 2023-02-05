@@ -1,12 +1,11 @@
 import React from 'react';
 import { useState, useRef } from 'react';
 import { Button } from '@progress/kendo-react-buttons';
-import kendoka from './kendoka.svg';
 import {Input} from "@progress/kendo-react-inputs";
-import Table from './Table';
+import Table from '../components/Table';
 import { Loader } from "@progress/kendo-react-indicators";
-import NavBar from './NavBar';
-import './App.css';
+import NavBar from '../components/NavBar';
+import '../App.css';
 
 function Url() {
   const [tableDisp, setTableDisp] = useState(false);
