@@ -56,9 +56,7 @@ const File = () => {
                 .then(response => response.json())
                 .then(response => {
                     console.log(response);
-                    console.log("abbbbb",response.data);
                     setValue(response.data.attributes.last_analysis_results);
-                    console.log("abbbbb",response.data);
                     console.log("absbbd",response.data.attributes.last_analysis_results);
                     setLoading(false);
                     setTableDisp(true);
