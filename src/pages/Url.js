@@ -1,10 +1,7 @@
 import React from "react";
 import { useState, useRef } from "react";
-import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
-import Table from "../components/Table";
 import { Loader } from "@progress/kendo-react-indicators";
-import NavBar from "../components/NavBar";
 import "../App.css";
 import axios from "axios";
 import {
@@ -15,21 +12,18 @@ import {
 } from "@progress/kendo-react-grid";
 import { process } from "@progress/kendo-data-query";
 import { GridPDFExport } from "@progress/kendo-react-pdf";
-import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
 const crypto = require("crypto-js");
 
 const initialDataState = {};
-
+//  URL component of application
 function Url() {
   const [loading, setLoading] = useState(false);
   const urlValue = useRef();
-  const [view, setView] = useState(false);
-  const [value, setValue] = useState(null);
-  const [urlId, setUrlId] = useState(null);
   const [result, setResult] = useState();
   const [data, setData] = useState();
   const [dataState, setDataState] = useState(initialDataState);
 
+  //PDF export functionality
   let gridPDFExport;
   const exportPDF = () => {
     if (gridPDFExport) {
@@ -37,37 +31,40 @@ function Url() {
     }
   };
 
+  //Function when submit Generate report is clicked
   const submitHandler = (event) => {
     event.preventDefault();
     setLoading(true);
     setData();
     setResult();
-    const addUrl = urlValue.current.value;
-    const hash = crypto.SHA256(addUrl);
-    let url_id = hash.toString();
-    console.log(url_id);
+    const addUrl = urlValue.current.value; //To read the value of entered URL
+    const hash = crypto.SHA256(addUrl); //converts URL to SHA256
+    let url_id = hash.toString(); //SHA256 is converted to string
+
     const options = {
       method: "GET",
-      url: `https://www.virustotal.com/api/v3/urls/${url_id}`,
+      url: `https://www.virustotal.com/api/v3/urls/${url_id}`, //Appending SHA256 of URL to api end-point
       headers: {
         accept: "application/json",
         "x-apikey":
-          "d7a57ef7ee3140b9795ed88224fc7d43520225c6bc411e40a881a01b32b23da2",
+          "d7a57ef7ee3140b9795ed88224fc7d43520225c6bc411e40a881a01b32b23da2", //api key
       },
     };
 
+    //Fetching the results from api
     axios
       .request(options)
       .then(function (response) {
-        const value = response.data?.data?.attributes?.last_analysis_results;
+        const value = response.data?.data?.attributes?.last_analysis_results; //Capturing the response from the api
         console.log("VAl", value);
         let arr = [];
         for (const val in value) {
           arr.push(value[val]);
         }
         setData(arr);
+
+        //Storing the reponse in variable
         setResult({
-          id: response.data.id,
           total:
             response?.data?.data?.attributes?.last_analysis_stats?.harmless +
             response?.data?.data?.attributes?.last_analysis_stats?.malicious +
@@ -83,16 +80,15 @@ function Url() {
         setLoading(false);
       })
       .catch(function (error) {
+        //For error handling
         setLoading(false);
         console.error(error);
       });
   };
 
-  console.log("Load", loading);
-
+  //Function to add styling to Clean and Unrated values
   const CustomCell = (props) => {
     const value = props.dataItem.result;
-    const navigationAttributes = useTableKeyboardNavigation(props.id);
     return (
       <td
         style={{
@@ -123,6 +119,7 @@ function Url() {
   ];
   const MyCustomCell = (props) => <CustomCell {...props} myProp={customData} />;
 
+  //URL component that renders results in kendo react table
   return (
     <div className="App">
       <div className="row" style={{ margin: 0 }}>
@@ -141,16 +138,13 @@ function Url() {
               >
                 <h1>{result.malicious}</h1>
                 <h5>/{result.total}</h5>
-                <p></p>
               </div>
               <div>
-                <h6>
+                <p>
                   {result.malicious} out of {result.total} vendors flagged this
                   URL as malicious
-                </h6>
-                <h6>Title: {result.title}</h6>
-                <h6>URL: {result.url}</h6>
-                <h6>ID: {result.id}</h6>
+                </p>
+                <p>Title: {result.title}</p>
               </div>
             </div>
           )}
@@ -174,20 +168,24 @@ function Url() {
               </button>
             </div>
           </form>
+        </div>
+        <div className="col-lg-4">
+          {result && (
+            <div>
+              <p>URL: {result.url}</p>
+              <p>ID: {result.id}</p>
+            </div>
+          )}
+        </div>
+        {loading && (
           <div
             className="col-4"
             style={{ margin: "auto", textAlign: "center" }}
-          ></div>
-        </div>
+          >
+            <Loader size="large" type="converging-spinner" />
+          </div>
+        )}
       </div>
-      <div className="col-lg-4">
-        <div></div>
-      </div>
-      {loading && (
-        <div className="col-4" style={{ margin: "auto", textAlign: "center" }}>
-          <Loader size="large" type="converging-spinner" />
-        </div>
-      )}
       {data && (
         <Grid
           style={{
