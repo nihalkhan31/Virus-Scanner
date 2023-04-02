@@ -2,7 +2,7 @@ body {
   margin: 0;
   font-family: 'Poppins';
   font-style: normal;
-  background-color: #F3F4F5;
+  background-color: white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -12,6 +12,6 @@ code {
     monospace;
 }
 
-p{
+p {
   font-size: 15px;
 }

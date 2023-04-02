@@ -113,6 +113,11 @@ const File = () => {
             response?.data?.data?.attributes?.last_analysis_stats?.malicious,
           url: response?.data?.data?.attributes?.url,
           id: response?.data?.data?.id,
+          md5: response?.data?.data?.attributes?.md5,
+          sha1: response?.data?.data?.attributes?.sha1,
+          type: response?.data?.data?.attributes?.type_description,
+          sha256: response?.data?.data?.attributes?.sha256,
+          size: response?.data?.data?.attributes?.size,
         });
         setLoading(false);
       })
@@ -123,45 +128,59 @@ const File = () => {
   };
 
   //Function to add styling to Clean and Unrated values
-  const CustomCell = (props) => {
-    const value = props.dataItem.result;
-    return (
-      <td
-        style={{
-          color:
-            value === "clean"
-              ? props.myProp[0].color
-              : value === "unrated"
-              ? props.myProp[2]
-              : props.myProp[1].color,
-        }}
-        colSpan={props.colSpan}
-        role={"gridcell"}
-      >
-        <b>{props.dataItem.result}</b>
-      </td>
-    );
+  const MyCustomCell = (props) => {
+    let colClr = {
+      color:
+        props.dataItem.category === "undetected"
+          ? "green"
+          : props.dataItem.category === "type-unsupported"
+          ? "grey"
+          : "red",
+    };
+    return <td style={colClr}>{props.dataItem.category.toUpperCase()}</td>;
   };
-  const customData = [
-    {
-      color: "green",
-    },
-    {
-      color: "red",
-    },
-    {
-      color: "grey",
-    },
-  ];
-  const MyCustomCell = (props) => <CustomCell {...props} myProp={customData} />;
-
   //URL component that renders results in kendo react table
   return (
     <div className="App">
       <div className="row" style={{ margin: 0 }}>
         <div className="col-lg-4">
+          <form onSubmit={onSubmitHandler}>
+            <div className="container">
+              <img
+                src="../images/file-icon.png"
+                alt="File LOGO"
+                style={{ height: "120px", width: "auto" }}
+              />
+              <br />
+              <input type="file" onChange={handleChange} />
+              <button className="btn btn-primary btn-sm" type="submit">
+                Click to Generate Report
+              </button>
+            </div>
+          </form>
+        </div>
+        <div className="col-lg-2">
           {result && (
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div className="k-card k-text-center">
+              <div className="k-card-header">
+                <div className="k-card-title">FILE QR</div>
+              </div>
+              <div className="k-card-body">
+                <QRCode value={hashHex} errorCorrection="M" />
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="col-lg-6">
+          {result && (
+            <div
+              style={{
+                display: "flex",
+                gap: "20px",
+                border: "1px solid #dadada",
+                borderRadius: "10px",
+              }}
+            >
               <div
                 style={{
                   border:
@@ -180,38 +199,16 @@ const File = () => {
                   {result.malicious} out of {result.total} vendors flagged this
                   File as malicious
                 </p>
+                <p>File Type:{result?.type}</p>
+                <p>MD5:{result?.md5}</p>
+                <p>SHA-1:{result?.sha1}</p>
+                <p>SHA-256:{result?.sha256}</p>
+                <p>Size:{Math.round(result?.size / 1024)}KB</p>
               </div>
             </div>
           )}
         </div>
-        <div className="col-lg-4">
-          <form onSubmit={onSubmitHandler}>
-            <div className="container">
-              <img
-                src="../images/file-icon.png"
-                alt="File LOGO"
-                style={{ height: "120px", width: "auto" }}
-              />
-              <br />
-              <input type="file" onChange={handleChange} />
-              <button className="btn btn-primary" type="submit">
-                Click to Generate Report
-              </button>
-            </div>
-          </form>
-        </div>
-        <div className="col-lg-4">
-          {result && (
-            <div className="k-card k-text-center">
-              <div className="k-card-header">
-                <div className="k-card-title">FILE QR</div>
-              </div>
-              <div className="k-card-body">
-                <QRCode value={hashHex} errorCorrection="M" />
-              </div>
-            </div>
-          )}
-        </div>
+
         {loading && (
           <div
             className="col-4"
@@ -224,7 +221,7 @@ const File = () => {
       {data && (
         <Grid
           style={{
-            height: "450px",
+            margin: "10px",
           }}
           data={process(data, dataState)}
           {...dataState}
@@ -246,7 +243,12 @@ const File = () => {
             </button>
           </GridToolbar>
           <GridColumn sortable={true} field="engine_name" title="Engine Name" />
-          <GridColumn sortable={true} field="category" title="Category" />
+          <GridColumn
+            sortable={true}
+            field="category"
+            title="Category"
+            cell={MyCustomCell}
+          />
         </Grid>
       )}
     </div>

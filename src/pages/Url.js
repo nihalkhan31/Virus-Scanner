@@ -12,6 +12,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { process } from "@progress/kendo-data-query";
 import { GridPDFExport } from "@progress/kendo-react-pdf";
+import { QRCode } from "@progress/kendo-react-barcodes";
 const crypto = require("crypto-js");
 
 const initialDataState = {};
@@ -22,7 +23,7 @@ function Url() {
   const [result, setResult] = useState();
   const [data, setData] = useState();
   const [dataState, setDataState] = useState(initialDataState);
-
+  const [urlId, setUrlId] = useState(null);
   //PDF export functionality
   let gridPDFExport;
   const exportPDF = () => {
@@ -40,7 +41,7 @@ function Url() {
     const addUrl = urlValue.current.value; //To read the value of entered URL
     const hash = crypto.SHA256(addUrl); //converts URL to SHA256
     let url_id = hash.toString(); //SHA256 is converted to string
-
+    setUrlId(url_id);
     const options = {
       method: "GET",
       url: `https://www.virustotal.com/api/v3/urls/${url_id}`, //Appending SHA256 of URL to api end-point
@@ -102,7 +103,7 @@ function Url() {
         colSpan={props.colSpan}
         role={"gridcell"}
       >
-        <b>{props.dataItem.result}</b>
+        <b>{props.dataItem.result.toUpperCase()}</b>
       </td>
     );
   };
@@ -124,32 +125,6 @@ function Url() {
     <div className="App">
       <div className="row" style={{ margin: 0 }}>
         <div className="col-lg-4">
-          {result && (
-            <div style={{ display: "flex", gap: "10px" }}>
-              <div
-                style={{
-                  border:
-                    result.malicious > 0 ? "7px solid red" : "7px solid green",
-                  borderRadius: "100%",
-                  width: 100,
-                  height: 100,
-                  textAlign: "center",
-                }}
-              >
-                <h1>{result.malicious}</h1>
-                <h5>/{result.total}</h5>
-              </div>
-              <div>
-                <p>
-                  {result.malicious} out of {result.total} vendors flagged this
-                  URL as malicious
-                </p>
-                <p>Title: {result.title}</p>
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="col-lg-4">
           <form onSubmit={submitHandler}>
             <div className="container">
               <img src="../images/url-icon.png" alt="URL LOGO" />
@@ -169,11 +144,50 @@ function Url() {
             </div>
           </form>
         </div>
-        <div className="col-lg-4">
+        <div className="col-lg-2">
           {result && (
-            <div>
-              <p>URL: {result.url}</p>
-              <p>ID: {result.id}</p>
+            <div className="k-card k-text-center">
+              <div className="k-card-header">
+                <div className="k-card-title">URL QR</div>
+              </div>
+              <div className="k-card-body">
+                <QRCode value={urlId} errorCorrection="M" />
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="col-lg-6">
+          {result && (
+            <div
+              style={{
+                display: "flex",
+                gap: "20px",
+                border: "1px solid #dadada",
+                borderRadius: "10px",
+              }}
+            >
+              <div
+                style={{
+                  border:
+                    result.malicious > 0 ? "7px solid red" : "7px solid green",
+                  borderRadius: "100%",
+                  width: 100,
+                  height: 100,
+                  textAlign: "center",
+                }}
+              >
+                <h1>{result.malicious}</h1>
+                <h5>/{result.total}</h5>
+              </div>
+              <div>
+                <p>
+                  {result.malicious} out of {result.total} vendors flagged this
+                  URL as malicious
+                </p>
+                <p>Title: {result.title}</p>
+                <p>URL: {result.url}</p>
+                <p>ID: {result.id}</p>
+              </div>
             </div>
           )}
         </div>
@@ -189,7 +203,7 @@ function Url() {
       {data && (
         <Grid
           style={{
-            height: "450px",
+            margin: "10px",
           }}
           data={process(data, dataState)}
           {...dataState}

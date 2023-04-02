@@ -1,34 +1,47 @@
-.container{
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-form{
+form {
   border: 1px solid #dadada;
   border-radius: 10px;
-  margin:0px;
+  margin: 0px;
 
 }
-html{
+
+html {
   background-color: white;
 }
-.App{
+
+.App {
   background-color: white;
-  margin-top: 3.5rem;
-  padding: 0px;
+  margin-top: 10px;
   width: 100%;
 }
-input{
+
+input {
   width: 100%;
   height: 2rem;
   margin-bottom: 1rem;
   margin-top: 0px;
-  border-radius: 5px;;
+  border-radius: 5px;
+  ;
 }
-img{
+
+img {
   margin-bottom: 0px;
 }
-.ip-url{
+
+.ip-url {
   width: 50%;
+}
+
+a {
+  color: white;
+}
+
+a:hover {
+  color: rgb(73, 72, 72);
 }
