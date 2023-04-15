@@ -260,6 +260,8 @@ const File = () => {
           <GridPDFExport
             ref={(pdfExport) => (gridPDFExport = pdfExport)}
             fileName="File Scan Results"
+            paperSize="A4"
+            scale={0.5}
           >
             <Grid data={process(data, dataState)}>
               <GridToolbar>
