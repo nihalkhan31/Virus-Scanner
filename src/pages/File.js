@@ -7,6 +7,7 @@ import { QRCode } from "@progress/kendo-react-barcodes";
 import axios from "axios";
 import { Grid, GridColumn, GridToolbar } from "@progress/kendo-react-grid";
 import { process } from "@progress/kendo-data-query";
+import { GridPDFExport } from "@progress/kendo-react-pdf";
 
 const initialDataState = {};
 
@@ -22,8 +23,9 @@ const File = () => {
   //PDF export functionality
   let gridPDFExport;
   const exportPDF = () => {
-    if (gridPDFExport) {
-      gridPDFExport.save(result);
+    console.log("acall");
+    if (gridPDFExport !== null) {
+      gridPDFExport.save();
     }
   };
 
@@ -219,37 +221,71 @@ const File = () => {
         )}
       </div>
       {data && (
-        <Grid
-          style={{
-            margin: "10px",
-          }}
-          data={process(data, dataState)}
-          {...dataState}
-          onDataStateChange={(e) => {
-            setDataState(e.dataState);
-          }}
-          sortable={true}
-          filterable={true}
-          total={data.length}
-        >
-          <GridToolbar>
-            <button
-              title="Export PDF"
-              className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
-              style={{ width: "5rem" }}
-              onClick={exportPDF}
-            >
-              Export PDF
-            </button>
-          </GridToolbar>
-          <GridColumn sortable={true} field="engine_name" title="Engine Name" />
-          <GridColumn
+        <div>
+          <Grid
+            style={{
+              margin: "10px",
+            }}
+            data={process(data, dataState)}
+            {...dataState}
+            onDataStateChange={(e) => {
+              setDataState(e.dataState);
+            }}
             sortable={true}
-            field="category"
-            title="Category"
-            cell={MyCustomCell}
-          />
-        </Grid>
+            filterable={true}
+            total={data.length}
+          >
+            <GridToolbar>
+              <button
+                title="Export PDF"
+                className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
+                style={{ width: "5rem" }}
+                onClick={exportPDF}
+              >
+                Export PDF
+              </button>
+            </GridToolbar>
+            <GridColumn
+              sortable={true}
+              field="engine_name"
+              title="Engine Name"
+            />
+            <GridColumn
+              sortable={true}
+              field="category"
+              title="Category"
+              cell={MyCustomCell}
+            />
+          </Grid>
+          <GridPDFExport
+            ref={(pdfExport) => (gridPDFExport = pdfExport)}
+            fileName="File Scan Results"
+          >
+            <Grid data={process(data, dataState)}>
+              <GridToolbar>
+                <button
+                  title="Export PDF"
+                  className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
+                  style={{ width: "5rem" }}
+                  onClick={exportPDF}
+                >
+                  Export PDF
+                </button>
+              </GridToolbar>
+              <GridColumn
+                sortable={true}
+                field="engine_name"
+                title="Engine Name"
+              />
+              <GridColumn
+                sortable={true}
+                field="category"
+                title="Category"
+                cell={MyCustomCell}
+              />
+            </Grid>
+          </GridPDFExport>
+        </div>
       )}
     </div>
   );

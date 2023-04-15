@@ -27,8 +27,8 @@ function Url() {
   //PDF export functionality
   let gridPDFExport;
   const exportPDF = () => {
-    if (gridPDFExport) {
-      gridPDFExport.save(result);
+    if (gridPDFExport !== null) {
+      gridPDFExport.save();
     }
   };
 
@@ -201,38 +201,88 @@ function Url() {
         )}
       </div>
       {data && (
-        <Grid
-          style={{
-            margin: "10px",
-          }}
-          data={process(data, dataState)}
-          {...dataState}
-          onDataStateChange={(e) => {
-            setDataState(e.dataState);
-          }}
-          sortable={true}
-          filterable={true}
-          total={data.length}
-        >
-          <GridToolbar>
-            <button
-              title="Export PDF"
-              className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
-              style={{ width: "5rem" }}
-              onClick={exportPDF}
-            >
-              Export PDF
-            </button>
-          </GridToolbar>
-          <GridColumn sortable={true} field="engine_name" title="Engine Name" />
-          <GridColumn
+        <div>
+          <Grid
+            style={{
+              margin: "10px",
+            }}
+            data={process(data, dataState)}
+            {...dataState}
+            onDataStateChange={(e) => {
+              setDataState(e.dataState);
+            }}
             sortable={true}
-            field="result"
-            title="Result"
-            cell={MyCustomCell}
-          />
-          <GridColumn sortable={true} field="category" title="Category" />
-        </Grid>
+            filterable={true}
+            total={data.length}
+          >
+            <GridToolbar>
+              <button
+                title="Export PDF"
+                className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
+                style={{ width: "5rem" }}
+                onClick={exportPDF}
+              >
+                Export PDF
+              </button>
+            </GridToolbar>
+            <GridColumn
+              sortable={true}
+              field="engine_name"
+              title="Engine Name"
+            />
+            <GridColumn
+              sortable={true}
+              field="result"
+              title="Result"
+              cell={MyCustomCell}
+            />
+            <GridColumn sortable={true} field="category" title="Category" />
+          </Grid>
+
+          <GridPDFExport
+            ref={(pdfExport) => (gridPDFExport = pdfExport)}
+            fileName="URL Scan Results"
+            paperSize="A4"
+            scale={0.5}
+          >
+            <Grid
+              style={{
+                margin: "10px",
+              }}
+              data={process(data, dataState)}
+              {...dataState}
+              onDataStateChange={(e) => {
+                setDataState(e.dataState);
+              }}
+              sortable={true}
+              filterable={true}
+              total={data.length}
+            >
+              <GridToolbar>
+                <button
+                  title="Export PDF"
+                  className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
+                  style={{ width: "5rem" }}
+                  onClick={exportPDF}
+                >
+                  Export PDF
+                </button>
+              </GridToolbar>
+              <GridColumn
+                sortable={true}
+                field="engine_name"
+                title="Engine Name"
+              />
+              <GridColumn
+                sortable={true}
+                field="result"
+                title="Result"
+                cell={MyCustomCell}
+              />
+              <GridColumn sortable={true} field="category" title="Category" />
+            </Grid>
+          </GridPDFExport>
+        </div>
       )}
     </div>
   );
